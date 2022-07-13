@@ -1,9 +1,10 @@
 import sys
 
 # filepath - путь к файлу GRCh38_latest_genomic.gff
-# filepath = "C:/Users/sizov/bioinf/splicing/GRCh38_latest_genomic.gff"
+filepath = "C:/Users/sizov/bioinf/splicing/GCF_000001635.27_GRCm39_genomic.gff"
 # python create_gff.py -i <fasta> -a <input_gff> -o <output_gff>
-filepath = sys.argv[4]
+#filepath = sys.argv[4]
+#filepath = "ex.gff"
 
 
 def exon_param(exon, cds_coord, strand, phases):
@@ -48,7 +49,7 @@ def create_gff_module(chr, exons_list, cds_coord, strand, phases, exon_id):
     res = ''
     if strand == "+":
         for i in range(len(exons_list) - 1):
-            introns_list.append([exons_list[i][1], exons_list[i+1][0]])
+            introns_list.append([str(int(exons_list[i][1]) + 1), str(int(exons_list[i+1][0]) - 1)])
         for i in range(len(introns_list)):
             #res += chr + "\t.\t" + "intron\t" + introns_list[i][0] + "\t" + introns_list[i][1] + "\t.\t+\t." + "\n"
             res += chr + "\t.\t" + "exon\t" + exon_param(exons_list[i], cds_coord, strand, phases) + ";" + exon_id[i] + "\n" +\
@@ -59,7 +60,7 @@ def create_gff_module(chr, exons_list, cds_coord, strand, phases, exon_id):
 
     if strand == "-":
         for i in range(len(exons_list) - 1):
-            introns_list.append([exons_list[i+1][1], exons_list[i][0]])
+            introns_list.append([str(int(exons_list[i+1][1]) + 1), str(int(exons_list[i][0]) - 1)])
         for i in range(len(introns_list)):
             #res += chr + "\t.\t" + "intron\t" + introns_list[i][0] + "\t" + introns_list[i][1] + "\t.\t-\t." + "\n"
             res += chr + "\t.\t" + "exon\t" + exon_param(exons_list[i], cds_coord, strand, phases) + ";" + exon_id[i] + "\n" +\
@@ -76,7 +77,7 @@ def write_in_file(file, chr, exons_coord, cds_coord, strand, phases, exons_id):
     file4.write(create_gff_module(chr, exons_coord, cds_coord, strand, phases, exons_id))
 
 
-outfile = sys.argv[6]
+outfile = "mouse.gff"
 exons_coord = []
 cds_coord = []
 exons_id = []
@@ -91,7 +92,7 @@ for line in lines:
         componentsLine = line.split("\t")
         tmp_parent = componentsLine[8].split(";")[1].split('=')[1][4::]
         if (componentsLine[2] == "exon" or componentsLine[2] == "CDS") and tmp_parent != parent:
-            if len(cds_coord) > 0:
+            if len(cds_coord) > 0 and len(exons_coord) > 0:
                 write_in_file(outfile, chr, exons_coord, cds_coord, strand, phases, exons_id)
             parent = tmp_parent
             exons_coord.clear()
