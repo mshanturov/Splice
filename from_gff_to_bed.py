@@ -15,6 +15,6 @@ for line in lines:
                 stop = int(componentsLine[4])
                 bed.write("\t".join([componentsLine[0], str(start), str(stop), ".", ".", strand, "\n"]))
             if strand == '-':
-                start = int(componentsLine[3])
-                stop = int(componentsLine[4]) + 1
+                start = int(componentsLine[3]) - 1
+                stop = int(componentsLine[4])
                 bed.write("\t".join([componentsLine[0], str(start), str(stop), ".", ".", strand, "\n"]))
