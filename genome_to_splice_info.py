@@ -12,8 +12,6 @@ from collections import defaultdict, Counter
 
 REVCOMP_DICTIONARY = dict(zip("ATCGNatcgn~[]", "TAGCNtagcn~]["))
 
-output_fl_ss3 = open("C:/Users/khani/IdeaProjects/SWW/ss3.fasta", "w")
-output_fl_ss5 = open("C:/Users/khani/IdeaProjects/SWW/ss5.fasta", "w")
 
 def get_revcomp(sequence):
     """Return reverse complementary sequence.
@@ -85,6 +83,8 @@ if __name__ == "__main__":
     output_file = args["output"]
     stats_output_file = args["stats"]
     flank = int(args["flanks"])
+    output_file_ss3 = "output_file_ss3.fna"
+    output_file_ss5 = "output_file_ss5.fna"
 
     contig2seq = {}
     for header, seq in sc_iter_fasta_brute(fasta_file):
@@ -145,8 +145,6 @@ if __name__ == "__main__":
                 ss3 = contig2seq[b[0]][b[1] - 3 : b[1] - 3 + 2].upper()
                 post_ss3 = contig2seq[b[0]][b[1] - 3 + 2 : b[1] - 3 + 2 + flank].upper()
                 exon = (gene_id, "+", pre_ss3, ss3, post_ss3, pre_ss5, ss5, post_ss5)
-                output_fl_ss5.write('>\n' + pre_ss5 + ss5 + post_ss5 + '\n')
-                output_fl_ss3.write('>\n' + pre_ss3 + ss3 + post_ss3 + '\n')
                 exons.append(exon)
         else:
             for j in range(1, len(gene2intervals[gene_id])):
@@ -160,11 +158,18 @@ if __name__ == "__main__":
                 post_ss5 = contig2seq[b[0]][b[1] - 3 + 2 : b[1] - 3 + 2 + flank].upper()
                 data = (pre_ss3, ss3, post_ss3, pre_ss5, ss5, post_ss5)
                 exon = [gene_id, "-"] + [x for x in map(get_revcomp, data)]
-                output_fl_ss5.write('>\n' + get_revcomp(pre_ss5 + ss5 + post_ss5) + '\n')
-                output_fl_ss3.write('>\n' + get_revcomp(pre_ss3 + ss3 + post_ss3) + '\n')
                 exons.append(tuple(exon))
 
+
     exons = set(exons)
+
+    with open(output_file_ss3, "w") as fw:
+        for exon in exons:
+            fw.write("\n".join([">", "".join([exon[2], exon[3], exon[4]])]))
+
+    with open(output_file_ss5, "w") as fw:
+        for exon in exons:
+            fw.write("\n".join([">", "".join([exon[5], exon[6], exon[7]])]))
 
     with open(output_file, "w") as fw:
         for exon in exons:
