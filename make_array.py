@@ -1,9 +1,10 @@
 import pandas as pd
 
+
 def make_martix_distance():
     column = set()
     stri = set()
-    with open("C:/Users/liza_/Desktop/sww/other/distances.tsv", 'r') as f:
+    with open("C:/Users/liza_/Desktop/sww/other/distance.tsv", 'r') as f:
         line = f.readline()
         while line != '':
             if line[0] != "#":
@@ -14,16 +15,19 @@ def make_martix_distance():
         column = sorted(column)
         stri = sorted(stri)
         df = pd.DataFrame(index=stri, columns=column)
-    with open("C:/Users/liza_/Desktop/sww/other/distances.tsv", 'r') as r:
+    with open("C:/Users/liza_/Desktop/sww/other/distance.tsv", 'r') as r:
         line = r.readline()
         while line != '':
             if line[0] != "#":
                 line_parts = line.split("\t")
                 df[int(line_parts[1])][int(line_parts[3])] = float(line_parts[5])
             line = r.readline()
+    df.to_excel("C:/Users/liza_/Desktop/sww/other/distance.xlsx")
     print(df)
 
-#пока что херня
+make_martix_distance()
+
+# пока что херня
 def make_martix_distance2():
     dict3 = {}
     dict5 = {}
