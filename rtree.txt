@@ -1,0 +1,11 @@
+считывание данных из таблицы (предварительно экспортировать в txt с табами или читать через read.xsls):
+>dist_matrix <- read.table("distances.txt", sep = "\t", header = TRUE, row.names = 1, dec = ",") 
+
+построение дерева и запись его в файл:
+>d = as.dist(new_table2)
+>my_tree = phangorn::upgma(d)
+>write.tree(my_tree, "tree.tre")
+
+работа с ggtree:
+>ggtree(tree) + geom_text2(aes(subset=!isTip, label=node), hjust=-.3) + geom_tiplab()
+>viewClade(gg+geom_tiplab(), node=1750)
